@@ -278,6 +278,7 @@ class _Link(type):
 
 class Pypher(with_metaclass(_Link)):
     PARAM_PREFIX = '$NEO'
+    shape = None  # Pycharm 2021.1 and newer hack
 
     def __init__(self, parent=None, params=None, *args, **kwargs):
         self._ = self
@@ -626,6 +627,9 @@ class _BaseLink(Pypher):
 
     def __unicode__(self):
         return self.__class__.__name__.upper()
+
+    def __len__(self):  # Pycharm 2020.3.1 hack
+        return 1
 
 
 class Statement(_BaseLink):
