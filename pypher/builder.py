@@ -2,7 +2,7 @@ import copy
 import sys
 import uuid
 
-from collections import namedtuple, OrderedDict, Hashable
+from collections import namedtuple, OrderedDict
 
 from six import with_metaclass
 
@@ -49,6 +49,24 @@ RELATIONSHIP_DIRECTIONS = {
     '>': 'out',
     '<': 'in',
 }
+
+QUOTES = {
+    'label': '`',
+    'property': '`',
+    'map_key': '`',
+}
+
+def quote(mark, val):
+    return '{}{}{}'.format(mark, val, mark)
+
+def quote_label(val):
+    return quote(QUOTES['label'], val)
+
+def quote_propery(val):
+    return quote(QUOTES['property'], val)
+
+def quote_map_key(val):
+    return quote(QUOTES['map_key'], val)
 
 
 def create_function(name, attrs=None, func_raw=False):
@@ -684,7 +702,8 @@ class Property(Statement):
         super(Property, self).__init__(name=name)
 
     def __unicode__(self):
-        return '.`{}`'.format(self.name)
+        prop = quote_propery(self.name)
+        return '.{}'.format(prop)
 
 
 class Label(Statement):
@@ -731,7 +750,7 @@ class Label(Statement):
         if not self.labels:
             return ''
 
-        labels = ['`{}`'.format(a) for a in self.labels]
+        labels = ['{}'.format(quote_label(a)) for a in self.labels]
         labels = ('{}'.format(self.operator)).join(labels)
 
         return ':{labels}'.format(labels=labels)
@@ -984,7 +1003,8 @@ class Map(_BaseLink):
         kwargs = OrderedDict(sorted(self.kwargs.items()))
 
         for k, val in kwargs.items():
-            pair = '`{}`: {}'.format(k, prep_value(val, k))
+            key = quote_map_key(k)
+            pair = '{}: {}'.format(key, prep_value(val, k))
             body.append(pair)
 
         body = ', '.join(body)
@@ -1051,7 +1071,8 @@ class Operator(_BaseLink):
                             param = self.bind_param(v)
                             v = param.placeholder
 
-                        new.append('`{}`: {}'.format(k, v))
+                        key = quote_map_key(k)
+                        new.append('{}: {}'.format(key, v))
 
                     return '{{{}}}'.format(', '.join(new))
                 else:
@@ -1147,8 +1168,9 @@ class Entity(_BaseLink):
         for k, v in self._properties.items():
             name = self.params.param_name(k)
             param = self.bind_param(value=v, name=name)
+            key = quote_propery(k)
 
-            properties.append('`{key}`: {val}'.format(key=k,
+            properties.append('{key}: {val}'.format(key=key,
                 val=param.placeholder))
 
         if properties:

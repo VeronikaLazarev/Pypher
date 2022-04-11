@@ -1,5 +1,18 @@
 # Pypher Changelog
 
+### 0.20.0 -- 03/19/2022
+
+* Added -- the ability to define custom quotes for labels, properties, and map_keys 
+
+```
+import pyper
+pyper.builder.QUOTES['propery'] = '"' # this will quote properties with a " instead of `
+```
+
+### 0.19.0 -- 1/21/2022
+
+* Fixed -- removed an unused `hashable` import to make Pypher python 3.10 compatable. Thanks Peter Bábics (@pbabics)
+
 ### 0.18.1 -- 7/31/2020
 
 * Fixed -- no longer binding python values of `True` and `False`, they will return `true` and `false` in the resulting cypher.
